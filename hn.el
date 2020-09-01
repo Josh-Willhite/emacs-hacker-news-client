@@ -9,7 +9,7 @@
 (defun hn-get-comments ()
   "display comments for the current headline"
   (interactive)
-  (hn-render-comments (hn-get-comments))
+  (hn-render-comments (hn-parse-comments))
   )
 
 (defun hn-render-comments (comments)
@@ -19,16 +19,25 @@
     ;; else go to next line an add a star
     ;; while indent-following > 1
     ;; do above and decrement indent-following
+    (insert (format "** %s\n" (alist-get `text comment)))
     (setq comment-point (point))
-    (while )
-    (insert (format "* [[%s][%s]] [[%s/item?id=%s][C]]\n"
-                    (alist-get `href row) (car (alist-get `title row)) *hn-url*  (alist-get `id row)))
-     )
+    (setq count)
+    (while (<= count (1- (string-to-number (alist-get `indent-following))))
+      ;; move to end of line add a astrix
+      (insert)
+
+      (1+ count)
+      )
+    ;; (while )
+    ;; (insert (format "* [[%s][%s]] [[%s/item?id=%s][C]]\n"
+    ;;                 (alist-get `href row) (car (alist-get `title row)) *hn-url*  (alist-get `id row)))
+    ;;  )
   )
 )
+  )
 
 
-(defun hn-get-comments ()
+(defun hn-parse-comments ()
     ;; (print (format "THE URL: %s"(org-element-property :raw-link (org-element-context))) (current-buffer))
     ;; (class . "comment-tree"))
     ;; ((class . "athing comtr ")
