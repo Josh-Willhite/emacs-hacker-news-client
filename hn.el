@@ -15,40 +15,28 @@
 (defun hn-render-comments (comments)
   (let (comment-point)
   (dolist (comment comments)
-    ;; if next line doesn't have a * then insert a newline and add a star
-    ;; else go to next line an add a star
-    ;; while indent-following > 1
-    ;; do above and decrement indent-following
-    (insert (format "** %s\n" (alist-get `text comment)))
-    (setq comment-point (point))
-    (setq count)
-    (while (<= count (1- (string-to-number (alist-get `indent-following))))
-      ;; move to end of line add a astrix
-      (insert)
+    (forward-line)
+    (end-of-line)
+    (insert "* \n")
+    (insert (alist-get `text comment))
+    (fill-paragraph)
+    (insert "\n")
+    (forward-line)
 
+    (setq comment-point (point))
+    (setq count 0)
+    (while (> (1- (string-to-number (alist-get `indent-following comment))) count)
+      (end-of-line)
+      (insert "*\n")
+      (forward-line)
       (1+ count)
       )
-    ;; (while )
-    ;; (insert (format "* [[%s][%s]] [[%s/item?id=%s][C]]\n"
-    ;;                 (alist-get `href row) (car (alist-get `title row)) *hn-url*  (alist-get `id row)))
-    ;;  )
   )
 )
   )
 
 
 (defun hn-parse-comments ()
-    ;; (print (format "THE URL: %s"(org-element-property :raw-link (org-element-context))) (current-buffer))
-    ;; (class . "comment-tree"))
-    ;; ((class . "athing comtr ")
-    ;; each comment has
-    ;; - comment text
-    ;; - number following to indent
-    ;; - id (for later features)
-    ;; ((comment . "the comment") (id . 1234) (children . (another node)))
-    ;; 
-  ;; (switch-to-buffer (get-buffer-create "the comments")
-  ;;                   (pp (dom-by-class comments-dom  "athing comtr") (get-buffer "the comments"))
   (let (comments id text indent-following comments-dom)
     (setq comments-dom (hn-get-dom (org-element-property :raw-link (org-element-context))))
     (dolist (item (dom-by-class comments-dom "athing comtr"))
