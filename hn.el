@@ -17,11 +17,8 @@
   (let (comment-stack)
     (end-of-line)
     (insert "\n")
-    (dolist (comment (subseq (reverse comments) 0 5))
+    (dolist (comment (reverse comments))
       (end-of-line)
-      (pp (format "STACK: %s INDENT: %s" comment-stack (string-to-number (alist-get `indent-following comment))) (current-buffer))
-      (open-line 1)
-      (forward-line)
       (if comment-stack
           (insert (format "%s** " (pop comment-stack)))
         (progn
@@ -45,25 +42,18 @@
 )
 
 (defun hn-add-comment-indents-to-stack (comment-stack indents)
-  (pp (format "STACK IN: %s" comment-stack) (current-buffer))
-  (open-line 1)
-  (forward-line)
   (let (comment-stack-out count)
     (setq count 0)
-    (while (>= indents count)
-      (setq count (1+ count))
+    (while (> (1- indents) count)
       (if comment-stack
           (push (format "%s*" (pop comment-stack)) comment-stack-out)
         (push "*" comment-stack-out)
       )
-      (pp (format "COUNT: %s STACK: %s" count (reverse comment-stack-out)) (current-buffer))
-      (open-line 1)
-      (forward-line)
+      (setq count (1+ count))
     )
-    (pp (format "STACK OUT: %s" (reverse comment-stack-out)) (current-buffer))
-    (open-line 1)
-    (forward-line)
-    (reverse comment-stack-out)
+
+    (setq comment-stack-out (append (reverse comment-stack-out) comment-stack))
+    comment-stack-out
   )
 )
 
