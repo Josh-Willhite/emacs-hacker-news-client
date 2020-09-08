@@ -1,0 +1,3 @@
+* Next
+** return to headline and collapse comment tree after rendering comments
+** headline paging, keep track of headlines that have been "viewed" and exclude on next load
