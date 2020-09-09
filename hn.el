@@ -40,6 +40,7 @@
                 (string-to-number (alist-get `indent-following comment))))
     )
     (goto-char headline-point)
+    (outline-hide-subtree)
   )
 )
 
