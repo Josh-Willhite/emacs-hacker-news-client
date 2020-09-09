@@ -14,7 +14,8 @@
 
 
 (defun hn-render-comments (comments)
-  (let (comment-stack)
+  (let (comment-stack headline-point)
+    (setq headline-point (point))
     (end-of-line)
     (insert "\n")
     (dolist (comment (reverse comments))
@@ -38,6 +39,7 @@
       (setq comment-stack (hn-add-comment-indents-to-stack comment-stack
                 (string-to-number (alist-get `indent-following comment))))
     )
+    (goto-char headline-point)
   )
 )
 
