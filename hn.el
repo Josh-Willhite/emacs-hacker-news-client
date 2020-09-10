@@ -14,6 +14,11 @@
 
 
 (defun hn-render-comments (comments)
+  ;; Clear potential existing comments
+  (org-toggle-narrow-to-subtree)
+  (org-show-subtree)
+  (forward-line)
+  (delete-region (point) (end-of-buffer))
   (let (comment-stack headline-point)
     (setq headline-point (point))
     (end-of-line)
