@@ -107,7 +107,7 @@
 (defun parse-rows (hn-dom)
 (let (row rows subitem)
         (
-                dolist (item (seq-subseq (dom-by-class hn-dom "\\(subtext\\|athing\\)") 0 2))
+                dolist (item (dom-by-class hn-dom "\\(subtext\\|athing\\)"))
                 (if (equal (alist-get `class (dom-attributes item)) "athing")
                         ;; Content of submission
                         (progn
