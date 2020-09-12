@@ -15,10 +15,10 @@
 
 (defun hn-render-comments (comments)
   ;; Clear potential existing comments
-  (org-toggle-narrow-to-subtree)
-  (org-show-subtree)
-  (forward-line)
-  (delete-region (point) (end-of-buffer))
+  ;; (org-toggle-narrow-to-subtree)
+  ;; (org-show-subtree)
+  ;; (forward-line)
+  ;; (delete-region (point) (end-of-buffer))
   (let (comment-stack headline-point)
     (setq headline-point (point))
     (end-of-line)
@@ -82,25 +82,66 @@
 
 (defun render-rows (rows)
   (dolist (row rows)
-    (insert (format "* [[%s][%s]] [[%s/item?id=%s][C]]\n"
+    (insert (format "* [[%s][%s]] [[%s/item?id=%s][Comments]]\n"
                     (alist-get `href row) (car (alist-get `title row)) *hn-url*  (alist-get `id row)))
     )
   )
 
+;; (defun parse-rows (hn-dom)
+;;   (let (rows id story hrek title rank row)
+;; (pp (dom-by-class hn-dom "itemlist") (current-buffer))
+;;   (dolist (item (dom-by-class hn-dom "athing"))
+;;       (setq id (alist-get `id (dom-attributes item)))
+;;       (setq story-link (dom-by-class item "storylink"))
+;;       (setq href (alist-get `href (dom-attributes story-link)))
+;;       (setq title (dom-children story-link))
+;;       (setq rank (car (dom-children (dom-by-class item "rank"))))
+;;       (setq row `((id . ,id) (rank . ,rank) (title . ,title) (href . ,href)))
+;;       (push row rows)
+;;     )
+;;   rows
+;;   )
+;;   )
+
+
 (defun parse-rows (hn-dom)
-  (let (rows id story hrek title rank row)
-  (dolist (item (dom-by-class hn-dom "athing"))
-      (setq id (alist-get `id (dom-attributes item)))
-      (setq story-link (dom-by-class item "storylink"))
-      (setq href (alist-get `href (dom-attributes story-link)))
-      (setq title (dom-children story-link))
-      (setq rank (car (dom-children (dom-by-class item "rank"))))
-      (setq row `((id . ,id) (rank . ,rank) (title . ,title) (href . ,href)))
-      (push row rows)
-    )
-  rows
-  )
-  )
+(let (row rows subitem)
+        (
+                dolist (item (seq-subseq (dom-by-class hn-dom "\\(subtext\\|athing\\)") 0 2))
+                (if (equal (alist-get `class (dom-attributes item)) "athing")
+                        ;; Content of submission
+                        (progn
+                        (setq subitem (dom-by-class item "athing"))
+                        (setq row
+                                `(
+                                (id . ,(alist-get `id (dom-attributes subitem)))
+                                (title . ,(dom-children (dom-by-class subitem "storylink")))
+                                (href . ,(alist-get `href (dom-attributes (dom-by-class subitem "storylink"))))
+                                )
+                        )
+                        )
+                        ;; Meta data for submission
+                        (progn
+                        (setq subitem (dom-by-class item "subtext"))
+                        (setq row
+                                (append
+                                        `(
+                                        (score . ,(dom-children (dom-by-class subitem "score")))
+                                        (user . ,(dom-children (dom-by-class subitem "hnuser")))
+                                        (age . ,(dom-children (dom-children (dom-by-class subitem "age"))))
+                                        (comments . ,(dom-children (reverse (dom-by-tag (car subitem) `a))))
+                                        )
+                                row
+                                )
+                        )
+                        (push row rows)
+                        )
+                )
+        )
+        rows
+)
+)
+
 
 (defun hn-get-dom (hn-url)
   (save-excursion
