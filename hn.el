@@ -1,8 +1,9 @@
-(defun hacker-news () "display HackerNews in buffer"
-       (interactive)
-       (switch-to-buffer (get-buffer-create "hacker news"))
-       (render-rows (parse-rows (hn-get-dom *hn-url*)))
-       (org-mode))
+(defun hacker-news ()
+  "display HackerNews in buffer"
+  (interactive)
+  (switch-to-buffer (get-buffer-create "hacker news"))
+  (render-rows (parse-rows (hn-get-dom *hn-url*)))
+  (org-mode))
 
 (defun hn-get-comments ()
   "display comments for the current headline"
@@ -17,8 +18,8 @@
     (insert "\n")
     (dolist (comment (reverse comments))
       (end-of-line)
-      (if comment-stack (insert (format "%s** " (pop comment-stack)))
-        (progn (insert "** ")))
+      (if comment-stack (insert (format "%s*** " (pop comment-stack)))
+        (progn (insert "*** ")))
       (open-line 1)
       (forward-line)
       (if (alist-get `text comment)
@@ -57,9 +58,15 @@
 (defvar *hn-url* "https://news.ycombinator.com")
 
 (defun render-rows (rows)
-  (dolist (row rows)
-    (insert (format "* [[%s][%s]] [[%s/item?id=%s][Comments]]\n" (alist-get `href row)
-                    (car (alist-get `title row)) *hn-url*  (alist-get `id row)))))
+  (let (domain)
+    (dolist (row rows)
+      (setq domain (url-domain (url-generic-parse-url (alist-get `href row))))
+      (insert (format "* [[%s][%s]] (%s)\n" (alist-get `href row)
+                      (car (alist-get `title row)) domain))
+      (insert (format "** %s by %s %s | [[%s/item?id=%s][%s]]\n" (alist-get `score row)
+                      (alist-get `user row)
+                      (alist-get `age row) *hn-url* (alist-get `id row)
+                      (alist-get `comments row))))))
 
 (defun parse-rows (hn-dom)
   (let (row rows subitem)
