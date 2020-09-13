@@ -59,14 +59,15 @@
 
 (defun render-rows (rows)
   (let (domain)
-    (dolist (row rows)
+    (dolist (row (reverse rows))
       (setq domain (url-domain (url-generic-parse-url (alist-get `href row))))
       (insert (format "* [[%s][%s]] (%s)\n" (alist-get `href row)
                       (car (alist-get `title row)) domain))
       (insert (format "** %s by %s %s | [[%s/item?id=%s][%s]]\n" (alist-get `score row)
                       (alist-get `user row)
                       (alist-get `age row) *hn-url* (alist-get `id row)
-                      (alist-get `comments row))))))
+                      (alist-get `comments row)))))
+  (beginning-of-buffer))
 
 (defun parse-rows (hn-dom)
   (let (row rows subitem)
