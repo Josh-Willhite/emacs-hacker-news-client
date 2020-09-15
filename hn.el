@@ -1,9 +1,8 @@
-(defun hacker-news ()
-  "display HackerNews in buffer"
-  (interactive)
-  (switch-to-buffer (get-buffer-create "hacker news"))
-  (render-rows (parse-rows (hn-get-dom *hn-url*)))
-  (org-mode))
+(defun hacker-news () "display HackerNews in buffer"
+       (interactive)
+       (switch-to-buffer (get-buffer-create "hacker news"))
+       (render-rows (parse-rows (hn-get-dom *hn-url*)))
+       (org-mode))
 
 (defun hn-get-comments ()
   "display comments for the current headline"
@@ -59,6 +58,8 @@
 
 (defun render-rows (rows)
   (let (domain)
+    (delete-region (point-min)
+                   (point-max))
     (dolist (row (reverse rows))
       (setq domain (url-domain (url-generic-parse-url (alist-get `href row))))
       (insert (format "* [[%s][%s]] (%s)\n" (alist-get `href row)
