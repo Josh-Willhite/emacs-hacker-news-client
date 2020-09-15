@@ -7,7 +7,8 @@
 (defun hn-get-comments ()
   "display comments for the current headline"
   (interactive)
-  (hn-render-comments (hn-parse-comments)))
+  (hn-render-comments (hn-parse-comments))
+  (org-show-subtree))
 
 
 (defun hn-render-comments (comments)
