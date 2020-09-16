@@ -1,5 +1,4 @@
 * Next
-** expand subtree of comments
 ** clear old comments on reload
 *** use org mode bullets
 ** show user names associated with comments
