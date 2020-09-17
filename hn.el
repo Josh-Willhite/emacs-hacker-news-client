@@ -8,11 +8,15 @@
   "display comments for the current headline"
   (interactive)
   (org-show-subtree)
-  (copy-region-as-kill (line-beginning-position) (line-end-position))
-  (org-cut-subtree)
-  (yank)
-  (previous-line)
-  (end-of-line)
+  (let (comment-subtext)
+    (setq comment-subtext
+          (buffer-substring-no-properties
+           (line-beginning-position)
+           (line-end-position)))
+    (org-cut-subtree)
+    (insert (format "%s\n" comment-subtext))
+    (forward-line -1)
+    (end-of-line))
   (backward-word)
   (hn-render-comments (hn-parse-comments))
   (org-show-subtree))
