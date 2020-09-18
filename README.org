@@ -1,4 +1,3 @@
 * Next
-** show user names associated with comments
 ** escape '*' in comments to avoid borking rendering
 ** headline paging, keep track of headlines that have been "viewed" and exclude on next load
