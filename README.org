@@ -1,3 +1,13 @@
-* Next
-** escape '*' in comments to avoid borking rendering
-** headline paging, keep track of headlines that have been "viewed" and exclude on next load
+* Next Features
+** mechanism for keeping track of "viewed" vs. "follow" headlines
+*** only ever load a headline once?
+*** store all headlines?
+** rename functions for consistency
+** add doc strings
+** fill out README
+*** look into similar projects
+
+* Bugs
+** deal with in comment formatting
+*** escape '*' in comments to avoid borking rendering
+*** represent quotes
