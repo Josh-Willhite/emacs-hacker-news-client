@@ -6,7 +6,6 @@
 ** add doc strings
 ** fill out README
 *** look into similar projects
-
 * Bugs
 ** deal with in comment formatting
 *** escape '*' in comments to avoid borking rendering

@@ -1,8 +1,12 @@
+(require `dom)
+
 (defun hacker-news () "display HackerNews in buffer"
        (interactive)
-       (switch-to-buffer (get-buffer-create "hacker news"))
+       (switch-to-buffer (get-buffer-create "hacker-news.org"))
        (render-rows (parse-rows (hn-get-dom *hn-url*)))
-       (org-mode))
+       (org-mode)
+  (outline-hide-sublevels 1)
+       )
 
 (defun hn-get-comments ()
   "display comments for the current headline"
@@ -84,8 +88,10 @@
       (insert (format "** %s by %s %s | [[%s/item?id=%s][%s]]\n" (alist-get `score row)
                       (alist-get `user row)
                       (alist-get `age row) *hn-url* (alist-get `id row)
-                      (alist-get `comments row)))))
-  (beginning-of-buffer))
+                      (alist-get `comments row)))
+      ))
+  (beginning-of-buffer)
+  )
 
 (defun parse-rows (hn-dom)
   (let (row rows subitem)
