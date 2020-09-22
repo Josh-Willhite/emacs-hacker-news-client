@@ -3,12 +3,12 @@
 (defun hacker-news () "display HackerNews in buffer"
        (interactive)
        (switch-to-buffer (get-buffer-create "hacker-news.org"))
-       (render-rows (parse-rows (hn-get-dom *hn-url*)))
+       (render-rows (parse-rows (hacker-nnews-get-dom *hacker-news-url*)))
        (org-mode)
   (outline-hide-sublevels 1)
        )
 
-(defun hn-get-comments ()
+(defun hacker-news-get-comments ()
   "display comments for the current headline"
   (interactive)
   (org-show-subtree)
@@ -22,11 +22,11 @@
     (forward-line -1)
     (end-of-line))
   (backward-word)
-  (hn-render-comments (hn-parse-comments))
+  (hacker-news-render-comments (hacker-news-parse-comments))
   (org-show-subtree))
 
 
-(defun hn-render-comments (comments)
+(defun hacker-news-render-comments (comments)
   (let (comment-stack headline-point headline)
     (setq headline-point (point))
     (end-of-line)
@@ -43,14 +43,14 @@
                  (fill-paragraph)))
       (open-line 1)
       (forward-line)
-      (setq comment-stack (hn-add-comment-indents-to-stack comment-stack (string-to-number
+      (setq comment-stack (hacker-news-add-comment-indents-to-stack comment-stack (string-to-number
                                                                           (alist-get
                                                                            `indent-following
                                                                            comment)))))
     (goto-char headline-point)
     (outline-hide-subtree)))
 
-(defun hn-add-comment-indents-to-stack (comment-stack indents)
+(defun hacker-news-add-comment-indents-to-stack (comment-stack indents)
   (let (comment-stack-out count)
     (setq count 0)
     (while (> (1- indents) count)
@@ -60,9 +60,9 @@
     (setq comment-stack-out (append (reverse comment-stack-out) comment-stack))
     comment-stack-out))
 
-(defun hn-parse-comments ()
+(defun hacker-news-parse-comments ()
   (let (comments id text indent-following comments-dom age)
-    (setq comments-dom (hn-get-dom (org-element-property :raw-link (org-element-context))))
+    (setq comments-dom (hacker-news-get-dom (org-element-property :raw-link (org-element-context))))
     (dolist (item (dom-by-class comments-dom "athing comtr"))
       (setq text (dom-texts (dom-by-class item "commtext c00")))
       (setq user (dom-texts (dom-by-class item "hnuser")))
@@ -75,9 +75,9 @@
               (indent-following . ,indent-following)
               (text . ,text)) comments)) comments))
 
-(defvar *hn-url* "https://news.ycombinator.com")
+(defvar *hcker-news-url* "https://news.ycombinator.com")
 
-(defun render-rows (rows)
+(defun hacker-news-render-rows (rows)
   (let (domain)
     (delete-region (point-min)
                    (point-max))
@@ -87,15 +87,15 @@
                       (car (alist-get `title row)) domain))
       (insert (format "** %s by %s %s | [[%s/item?id=%s][%s]]\n" (alist-get `score row)
                       (alist-get `user row)
-                      (alist-get `age row) *hn-url* (alist-get `id row)
+                      (alist-get `age row) *hacker-news-url* (alist-get `id row)
                       (alist-get `comments row)))
       ))
   (beginning-of-buffer)
   )
 
-(defun parse-rows (hn-dom)
+(defun hacker-news-parse-rows (hacker-news-dom)
   (let (row rows subitem)
-    (dolist (item (dom-by-class hn-dom "\\(subtext\\|athing\\)"))
+    (dolist (item (dom-by-class hacker-news-dom "\\(subtext\\|athing\\)"))
       (if (equal (alist-get `class (dom-attributes item)) "athing")
           ;; Content of submission
           (progn
@@ -115,8 +115,8 @@
           (push row rows)))) rows))
 
 
-(defun hn-get-dom (hn-url)
-  (save-excursion (with-current-buffer  (url-retrieve-synchronously hn-url)
-                    (url-retrieve-synchronously hn-url)
+(defun hacker-news-get-dom (hacker-news-url)
+  (save-excursion (with-current-buffer  (url-retrieve-synchronously hacker-news-url)
+                    (url-retrieve-synchronously hacker-news-url)
                     (libxml-parse-html-region (point-min)
                                               (point-max)))))
