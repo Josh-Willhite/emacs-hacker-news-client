@@ -1,9 +1,11 @@
 (require `dom)
 
+(defvar *hacker-news-url* "https://news.ycombinator.com")
+
 (defun hacker-news () "display HackerNews in buffer"
        (interactive)
        (switch-to-buffer (get-buffer-create "hacker-news.org"))
-       (render-rows (parse-rows (hacker-nnews-get-dom *hacker-news-url*)))
+       (hacker-news-render-rows (hacker-news-parse-rows (hacker-news-get-dom *hacker-news-url*)))
        (org-mode)
   (outline-hide-sublevels 1)
        )
@@ -75,7 +77,6 @@
               (indent-following . ,indent-following)
               (text . ,text)) comments)) comments))
 
-(defvar *hcker-news-url* "https://news.ycombinator.com")
 
 (defun hacker-news-render-rows (rows)
   (let (domain)
